@@ -1,9 +1,12 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;
 using SignalRSample_Identity.Data;
 using SignalRSample_Identity.Hubs;
 using SignalRSample_Identity.Models;
+using SignalRSample_Identity.Models.ChatViewModel;
 using System.Diagnostics;
+using System.Security.Claims;
 
 namespace SignalRSample_Identity.Controllers
 {
@@ -27,6 +30,29 @@ namespace SignalRSample_Identity.Controllers
         public IActionResult Index()
         {
             return View();
+        }
+        [Authorize]
+        public IActionResult Chat()
+        {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            ChatViewModel chatVm = new()
+            {
+                Rooms = _context.ChatRooms.ToList(),
+                MaxRoomAllowed = 4,
+                UserId = userId
+            };
+            return View(chatVm);
+        }
+        public IActionResult AdvancedChat()
+        {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            ChatViewModel chatVm = new()
+            {
+                Rooms = _context.ChatRooms.ToList(),
+                MaxRoomAllowed = 4,
+                UserId = userId
+            };
+            return View(chatVm);
         }
         public IActionResult BasicChat()
         {
